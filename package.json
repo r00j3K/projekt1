@@ -1,0 +1,10 @@
+{
+    "dependencies": {
+      "express": "*",
+      "nodemon": "*",
+      "node-fetch": "*"
+    },
+    "scripts": {
+        "start": "nodemon app.js"
+      }
+  }
