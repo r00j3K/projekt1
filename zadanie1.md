@@ -18,5 +18,6 @@
 ![](/screeny/warstwy.png)
 
 > <h1> Analiza podatności utworzonego obrazu na zagrożenia </h1>
+> Sprawdzenie poprawności odbyło sie na systemie Fedora, z uwagi na problemy z usługą Docker Scout na systemie Windows.
 > docker scout quickview projekt_obraz <br>
 ![](/screeny/docker_scout.png)
