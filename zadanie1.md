@@ -1,6 +1,6 @@
 > <h1>Budowa obrazu</h1>
 > docker build -f Dockerfile -t projekt_obraz . <br>
-> ![](./screeny/budowa_obrazu.png)
+> ![](/screeny/budowa_obrazu.png)
 
 > <h1> Uruchomienie kontenera </h1>
 > docker run -d -p 8000:80 --name projekt_kontener projekt_obraz <br>
