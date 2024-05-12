@@ -1,0 +1,65 @@
+#Etap 1
+
+# syntax=docker/dockerfile:1
+
+#budowanie obrazu od podstaw
+FROM scratch as first_stage
+#ustawienie katalogu roboczego
+WORKDIR /home/
+#dodanie systemu plików do obrazu
+ADD alpine-minirootfs-3.19.1-x86_64.tar /
+
+#aktualizacja, instalacja niezbędnych pakietów i czyszczenie cache'a
+RUN apk update && \
+    apk add nodejs npm && \
+    apk add git && \
+    apk add openssh-client && \
+    rm -rf /var/cache/apk/*
+
+#utworzenie nowego katalogu wewnątrz kontenera z uprawnieniami 0700, następnie skanowanie klucza serwera github i dodanie go do pliku known_hosts w katalogu .ssh wewnątrz kontenera, na koniec zostaje uruchomiony agent SSH
+RUN mkdir -p -m 0700 ~/.ssh        \
+    && ssh-keyscan github.com >> ~/.ssh/known_hosts \
+    && eval $(ssh-agent)  
+
+#skopiowanie zawartości repozytorium, który zawiera wszystkie składniki niezbędne do budowania obrazu
+RUN --mount=type=ssh git clone git@github.com:r00j3K/projekt1.git
+
+#ustawienie nowego kataloga roboczego
+WORKDIR /home/projekt1
+
+#instalacja zależności zdefiniowanych w "package.json"
+RUN npm install
+
+#Etap 2
+
+# syntax=docker/dockerfile:1
+
+#budowanie obrazu na podstawie obrazu alpine
+FROM alpine:latest
+#ustawienie autora
+LABEL maintainer="Adrian Rojek"
+#ustawienie katalogu roboczego
+WORKDIR /home/
+
+#aktualizacja, instalacja nodejs i czyszczenie cache'a
+RUN apk update && \
+    apk add nodejs curl && \
+    rm -rf /var/cache/apk/*
+
+#skopiowanie pliku aplikacji oraz niezbędnych do jej działania modułów z pierwszego etapu do katalogu roboczego obrazu "właściwego"
+COPY --from=first_stage /home/projekt1 ./
+
+#uruchomienie aplikacji
+CMD node app.js
+
+#wystawienie portu 80 do użytku na zewnątrz kontenera
+EXPOSE 80
+
+#przeprowadzenie testu poprawności działania kontenera
+HEALTHCHECK --interval=15s --timeout=1s \
+    CMD curl -f http://localhost:80
+
+
+
+
+
