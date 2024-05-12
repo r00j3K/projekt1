@@ -1,3 +1,0 @@
-docker buildx create --name projekt_builder --driver docker-container --bootstrap --use - utworzenie dedykowanego buuildera w kontenerze o nazwie projekt_builder, uruchomienie go i ustawienie go jako domyślnego buildera
-docker buildx build -f Dockerfile2 -t docker.io/adrianrojek01/nowy_projekt1:v0 --ssh default=$SSH_AUTH_SOCK --platform linux/arm64,linux/amd64 --push .
-docker run -d -p 8000:80 --name projekt_zmodyfikowany adrianrojek01/nowy_projekt1:v0
